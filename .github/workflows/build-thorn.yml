@@ -1,0 +1,38 @@
+name: Build Thorn (Fork)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-thorn:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Modify App Name and Application ID
+        run: |
+          sed -i 's/applicationId = "com.valhalla.thor"/applicationId = "com.valhalla.thorn"/g' app/build.gradle.kts
+          sed -i 's/<string name="app_name" translatable="false">Thor<\/string>/<string name="app_name" translatable="false">Thorn<\/string>/g' app/src/main/res/values/non-translatable.xml
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Debug APKs
+        run: ./gradlew assembleDebug
+
+      - name: Upload Thorn APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: Thorn-APKs
+          path: app/build/outputs/apk/*/debug/*.apk
