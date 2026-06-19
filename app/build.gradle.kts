@@ -70,15 +70,14 @@ private fun resolveVersionName(code: Int): String {
 }
 
 
-private fun resolvePreviewId(): String {
-    val raw = providers.gradleProperty("prNumber").orNull
-        ?: System.getenv("PR_NUMBER")
-        ?: "local"
-
-    return raw.lowercase()
-        .replace(Regex("[^a-z0-9_]+"), "")
-        .ifBlank { "local" }
-}
+private fun resolvePreviewId() = providers.gradleProperty("prNumber")
+    .orElse(providers.environmentVariable("PR_NUMBER"))
+    .orElse("local")
+    .map { raw ->
+        raw.lowercase()
+            .replace(Regex("[^a-z0-9_]+"), "")
+            .ifBlank { "local" }
+    }
 
 android {
     namespace = "com.valhalla.thor"
@@ -165,7 +164,7 @@ android {
         create("preview") {
             dimension = "channel"
 
-            val previewId = resolvePreviewId()
+            val previewId = resolvePreviewId().get()
             applicationId = "com.valhalla.thor.fork.pr$previewId"
             versionNameSuffix = "-pr$previewId"
             resValue("string", "app_name", "Thor PR #$previewId")
