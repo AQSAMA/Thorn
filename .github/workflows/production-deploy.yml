@@ -100,9 +100,9 @@ jobs:
           name: Release v${{ steps.prep_notes.outputs.version_name }}
           body_path: ${{ steps.prep_notes.outputs.github_notes_path }}
           files: |
-            app/build/distribution/foss/foss-release.apk
-            app/build/distribution/store/store-release.apk
-            app/build/outputs/bundle/storeRelease/*.aab
+            app/build/distribution/foss/fossStableForkRelease/fossStableForkRelease.apk
+            app/build/distribution/store/storeStableForkRelease/storeStableForkRelease.apk
+            app/build/outputs/bundle/storeStableForkRelease/*.aab
           draft: false
           prerelease: false
         env:

@@ -69,6 +69,17 @@ private fun resolveVersionName(code: Int): String {
         ?: calculateVersionName(code)
 }
 
+
+private fun resolvePreviewId(): String {
+    val raw = providers.gradleProperty("prNumber").orNull
+        ?: System.getenv("PR_NUMBER")
+        ?: "local"
+
+    return raw.lowercase()
+        .replace(Regex("[^a-z0-9_]+"), "")
+        .ifBlank { "local" }
+}
+
 android {
     namespace = "com.valhalla.thor"
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -127,10 +138,11 @@ android {
         debug {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
         }
     }
 
-    flavorDimensions += "distribution"
+    flavorDimensions += listOf("distribution", "channel")
 
     productFlavors {
         create("store") {
@@ -141,6 +153,22 @@ android {
             dimension = "distribution"
             versionNameSuffix = "-foss"
             proguardFile("proguard-rules-foss.pro")
+        }
+
+        create("stableFork") {
+            dimension = "channel"
+            applicationId = "com.valhalla.thor.fork"
+            versionNameSuffix = "-fork"
+            resValue("string", "app_name", "Thor Fork")
+        }
+
+        create("preview") {
+            dimension = "channel"
+
+            val previewId = resolvePreviewId()
+            applicationId = "com.valhalla.thor.fork.pr$previewId"
+            versionNameSuffix = "-pr$previewId"
+            resValue("string", "app_name", "Thor PR #$previewId")
         }
     }
 
@@ -153,6 +181,7 @@ android {
         buildConfig = true
         compose = true
         aidl = true
+        resValues = true
     }
 
     packaging {
@@ -176,12 +205,13 @@ androidComponents {
     onVariants(selector().withFlavor("distribution", "foss")) { variant ->
         if (variant.buildType == "release") {
             val apkDir = variant.artifacts.get(SingleArtifact.APK)
-            tasks.register<Copy>("copyFossReleaseApk") {
-                description = "Copy Foss Release APK to the destination"
-                dependsOn("assembleFossRelease")
+            val variantTaskName = variant.name.replaceFirstChar { it.uppercase() }
+            tasks.register<Copy>("copy${variantTaskName}Apk") {
+                description = "Copy ${variant.name} APK to the destination"
+                dependsOn("assemble$variantTaskName")
                 from(apkDir) { include("*.apk") }
-                into(layout.buildDirectory.dir("distribution/foss"))
-                rename(".*\\.apk", "foss-release.apk")
+                into(layout.buildDirectory.dir("distribution/foss/${variant.name}"))
+                rename(".*\\.apk", "${variant.name}.apk")
             }
         }
     }
@@ -190,12 +220,13 @@ androidComponents {
     onVariants(selector().withFlavor("distribution", "store")) { variant ->
         if (variant.buildType == "release") {
             val apkDir = variant.artifacts.get(SingleArtifact.APK)
-            tasks.register<Copy>("copyStoreReleaseApk") {
-                description = "Copy Store Release APK to the destination"
-                dependsOn("assembleStoreRelease")
+            val variantTaskName = variant.name.replaceFirstChar { it.uppercase() }
+            tasks.register<Copy>("copy${variantTaskName}Apk") {
+                description = "Copy ${variant.name} APK to the destination"
+                dependsOn("assemble$variantTaskName")
                 from(apkDir) { include("*.apk") }
-                into(layout.buildDirectory.dir("distribution/store"))
-                rename(".*\\.apk", "store-release.apk")
+                into(layout.buildDirectory.dir("distribution/store/${variant.name}"))
+                rename(".*\\.apk", "${variant.name}.apk")
             }
         }
     }

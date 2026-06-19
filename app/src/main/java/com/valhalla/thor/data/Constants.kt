@@ -1,3 +1,5 @@
 package com.valhalla.thor.data
 
-const val ACTION_INSTALL_STATUS = "com.valhalla.thor.INSTALL_STATUS"
+import com.valhalla.thor.BuildConfig
+
+val ACTION_INSTALL_STATUS = "${BuildConfig.APPLICATION_ID}.INSTALL_STATUS"

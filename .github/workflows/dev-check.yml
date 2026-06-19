@@ -121,7 +121,7 @@ jobs:
           GITHUB_REF_NAME: ${{ github.ref_name }}
           GITHUB_ACTOR: ${{ github.actor }}
         run: |
-          # Fastlane 'copyStoreReleaseApk' task puts it here
+          # Fastlane 'copyStoreStableForkReleaseApk' task puts it here
           APK_PATH=$(find app/build/distribution/store -name "*.apk" | head -n 1)
           
           if [ ! -f "$APK_PATH" ]; then
@@ -154,8 +154,8 @@ jobs:
           name: Dev Build v${{ steps.prep_notes.outputs.version_name }} (${{ github.run_number }})
           body_path: ${{ steps.prep_notes.outputs.github_notes_path }}
           files: |
-            app/build/distribution/foss/foss-release.apk
-            app/build/distribution/store/store-release.apk
+            app/build/distribution/foss/fossStableForkRelease/fossStableForkRelease.apk
+            app/build/distribution/store/storeStableForkRelease/storeStableForkRelease.apk
           draft: false
           prerelease: true
         env:

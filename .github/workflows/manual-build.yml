@@ -65,8 +65,8 @@ jobs:
         with:
           name: Thor-v${{ env.VERSION_NAME }}-Build-${{ env.VERSION_CODE }}
           path: |
-            app/build/distribution/foss/foss-release.apk
-            app/build/distribution/store/store-release.apk
+            app/build/distribution/foss/fossStableForkRelease/fossStableForkRelease.apk
+            app/build/distribution/store/storeStableForkRelease/storeStableForkRelease.apk
 
       # --- SECURITY CLEANUP ---
       - name: Cleanup sensitive files
