@@ -4,6 +4,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.valhalla.thor.BuildConfig
 import com.valhalla.thor.R
 import com.valhalla.thor.domain.model.AppClickAction
 import com.valhalla.thor.domain.model.AppInfo
@@ -176,7 +177,7 @@ class MainViewModel(
 
             // 2. Filter out self and Play Store to be safe
             val safeList = targetList.filter {
-                it.packageName != "com.valhalla.thor" &&
+                it.packageName != BuildConfig.APPLICATION_ID &&
                         it.packageName != "com.android.vending"
             }
 

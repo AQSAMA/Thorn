@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.rememberAsyncImagePainter
+import com.valhalla.thor.BuildConfig
 import com.valhalla.thor.R
 import com.valhalla.thor.domain.model.AppClickAction
 import com.valhalla.thor.domain.model.AppInfo
@@ -414,7 +415,7 @@ private fun AppActionRow(
         }
 
         // 4. Uninstall
-        if (appInfo.packageName != "com.valhalla.thor") {
+        if (appInfo.packageName != BuildConfig.APPLICATION_ID) {
             ActionItem(R.drawable.delete_forever, stringResource(R.string.action_uninstall)) {
                 onAction(AppClickAction.Uninstall(appInfo))
             }

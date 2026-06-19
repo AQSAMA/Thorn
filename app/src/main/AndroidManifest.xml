@@ -109,7 +109,7 @@
             android:name=".data.receivers.InstallReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.valhalla.thor.INSTALL_STATUS" />
+                <action android:name="${applicationId}.INSTALL_STATUS" />
             </intent-filter>
         </receiver>
 

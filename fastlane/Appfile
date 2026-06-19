@@ -1,4 +1,4 @@
-package_name("com.valhalla.thor")
+package_name("com.valhalla.thor.fork")
 
 # DYNAMIC KEY PATH
 # 1. Tries to use ENV["JSON_KEY_FILE"] (CI/CD)
